@@ -1,0 +1,760 @@
+/* ───────────────────────────────────────────────────────────────
+   Flashcard Quiz App — Stylesheet
+   Design philosophy: glassmorphism meets editorial typography.
+   Inspired by the principles outlined in Refactoring UI by Adam Wathan
+   and Steve Schoger (2018), and the CSS architecture patterns from
+   "Every Layout" by Heydon Pickering and Andy Bell (2019).
+   ─────────────────────────────────────────────────────────────── */
+
+:root {
+    /* ── Color System ── */
+    --bg-deep:        #0f0f1a;
+    --bg-surface:     rgba(255, 255, 255, 0.03);
+    --bg-surface-elev: rgba(255, 255, 255, 0.06);
+    --border-subtle:  rgba(255, 255, 255, 0.08);
+    --border-medium:  rgba(255, 255, 255, 0.12);
+    --text-primary:   #f0f0f5;
+    --text-secondary: #a0a0b8;
+    --text-muted:     #6b6b80;
+    --accent:         #e8b86d;
+    --accent-soft:    rgba(232, 184, 109, 0.15);
+    --accent-glow:    rgba(232, 184, 109, 0.4);
+    --danger:         #e86d6d;
+    --danger-soft:    rgba(232, 109, 109, 0.15);
+    --success:        #6de8a0;
+    --success-soft:   rgba(109, 232, 160, 0.15);
+
+    /* ── Typography ── */
+    --font-display:   "Playfair Display", Georgia, serif;
+    --font-body:      "Inter", -apple-system, BlinkMacSystemFont, sans-serif;
+
+    /* ── Spacing Scale (8px base) ── */
+    --space-1: 0.25rem;   /* 4px  */
+    --space-2: 0.5rem;    /* 8px  */
+    --space-3: 0.75rem;   /* 12px */
+    --space-4: 1rem;      /* 16px */
+    --space-5: 1.5rem;    /* 24px */
+    --space-6: 2rem;      /* 32px */
+    --space-8: 3rem;      /* 48px */
+    --space-10: 4rem;     /* 64px */
+    --space-12: 5rem;     /* 80px */
+
+    /* ── Radii ── */
+    --radius-sm:  8px;
+    --radius-md:  12px;
+    --radius-lg:  20px;
+    --radius-xl:  28px;
+
+    /* ── Shadows ── */
+    --shadow-sm:  0 1px 2px rgba(0, 0, 0, 0.3);
+    --shadow-md:  0 4px 12px rgba(0, 0, 0, 0.4);
+    --shadow-lg:  0 12px 40px rgba(0, 0, 0, 0.5);
+    --shadow-glow: 0 0 60px var(--accent-glow);
+
+    /* ── Transitions ── */
+    --ease-out-expo: cubic-bezier(0.16, 1, 0.3, 1);
+    --ease-spring:   cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+/* ── Reset & Base ── */
+*, *::before, *::after {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html {
+    font-size: 16px;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+    font-family: var(--font-body);
+    background: var(--bg-deep);
+    color: var(--text-primary);
+    min-height: 100vh;
+    overflow-x: hidden;
+    line-height: 1.6;
+}
+
+/* ── Ambient Background ── */
+.ambient-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+}
+
+.orb {
+    position: absolute;
+    border-radius: 50%;
+    filter: blur(80px);
+    opacity: 0.4;
+    animation: orbFloat 20s ease-in-out infinite;
+}
+
+.orb-1 {
+    width: 500px;
+    height: 500px;
+    background: radial-gradient(circle, rgba(232, 184, 109, 0.3), transparent 70%);
+    top: -10%;
+    left: -5%;
+    animation-delay: 0s;
+}
+
+.orb-2 {
+    width: 400px;
+    height: 400px;
+    background: radial-gradient(circle, rgba(109, 184, 232, 0.2), transparent 70%);
+    bottom: -10%;
+    right: -5%;
+    animation-delay: -7s;
+}
+
+.orb-3 {
+    width: 300px;
+    height: 300px;
+    background: radial-gradient(circle, rgba(232, 109, 184, 0.2), transparent 70%);
+    top: 40%;
+    left: 50%;
+    animation-delay: -14s;
+}
+
+@keyframes orbFloat {
+    0%, 100% { transform: translate(0, 0) scale(1); }
+    25% { transform: translate(30px, -40px) scale(1.05); }
+    50% { transform: translate(-20px, 20px) scale(0.95); }
+    75% { transform: translate(40px, 30px) scale(1.02); }
+}
+
+/* ── Header ── */
+.app-header {
+    position: relative;
+    z-index: 10;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--space-5) var(--space-6);
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.logo {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    color: var(--text-primary);
+}
+
+.logo svg {
+    flex-shrink: 0;
+    color: var(--accent);
+}
+
+.logo h1 {
+    font-family: var(--font-display);
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+}
+
+.logo .accent {
+    color: var(--accent);
+    font-weight: 400;
+    font-style: italic;
+}
+
+.card-counter {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-family: var(--font-body);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    padding: var(--space-2) var(--space-4);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.card-counter .divider {
+    color: var(--text-muted);
+}
+
+#card-count {
+    color: var(--accent);
+    font-weight: 700;
+}
+
+/* ── Main Layout ── */
+.app-main {
+    position: relative;
+    z-index: 10;
+    max-width: 800px;
+    margin: 0 auto;
+    padding: var(--space-6) var(--space-6) var(--space-12);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-10);
+}
+
+/* ── Flashcard Stage ── */
+.flashcard-stage {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--space-6);
+}
+
+/* ── The Flashcard ── */
+.flashcard {
+    width: 100%;
+    max-width: 560px;
+    aspect-ratio: 16 / 10;
+    perspective: 1200px;
+    cursor: pointer;
+    user-select: none;
+    -webkit-tap-highlight-color: transparent;
+}
+
+.flashcard-inner {
+    position: relative;
+    width: 100%;
+    height: 100%;
+    transform-style: preserve-3d;
+    transition: transform 0.7s var(--ease-out-expo);
+    border-radius: var(--radius-xl);
+}
+
+.flashcard.flipped .flashcard-inner {
+    transform: rotateY(180deg);
+}
+
+.flashcard-face {
+    position: absolute;
+    inset: 0;
+    backface-visibility: hidden;
+    -webkit-backface-visibility: hidden;
+    border-radius: var(--radius-xl);
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    padding: var(--space-6);
+    overflow: hidden;
+}
+
+/* Glass morphism card surface */
+.flashcard-face::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    background: linear-gradient(
+        135deg,
+        rgba(255, 255, 255, 0.08) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    border: 1px solid var(--border-medium);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    z-index: -1;
+}
+
+/* Subtle top highlight */
+.flashcard-face::after {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 20%;
+    right: 20%;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, rgba(255,255,255,0.2), transparent);
+    z-index: 1;
+}
+
+.flashcard-front {
+    z-index: 2;
+}
+
+.flashcard-back {
+    transform: rotateY(180deg);
+    z-index: 1;
+}
+
+.flashcard-back::before {
+    background: linear-gradient(
+        225deg,
+        rgba(232, 184, 109, 0.06) 0%,
+        rgba(255, 255, 255, 0.02) 50%,
+        rgba(255, 255, 255, 0.05) 100%
+    );
+    border-color: rgba(232, 184, 109, 0.15);
+}
+
+.face-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    gap: var(--space-3);
+    text-align: center;
+}
+
+.face-label {
+    font-size: 0.6875rem;
+    font-weight: 600;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-muted);
+}
+
+.flashcard-back .face-label {
+    color: var(--accent);
+    opacity: 0.7;
+}
+
+.face-text {
+    font-family: var(--font-display);
+    font-size: clamp(1.25rem, 3vw, 1.75rem);
+    font-weight: 700;
+    line-height: 1.4;
+    color: var(--text-primary);
+    max-width: 90%;
+    word-wrap: break-word;
+}
+
+.flashcard-back .face-text {
+    color: var(--accent);
+}
+
+.face-hint {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    font-size: 0.75rem;
+    color: var(--text-muted);
+    opacity: 0.6;
+    transition: opacity 0.3s ease;
+}
+
+.flashcard:hover .face-hint {
+    opacity: 1;
+}
+
+.face-hint svg {
+    opacity: 0.5;
+}
+
+/* ── Card Navigation ── */
+.card-nav {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-5);
+    font-family: var(--font-body);
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.25s var(--ease-out-expo);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+}
+
+.nav-btn:hover:not(:disabled) {
+    background: var(--bg-surface-elev);
+    border-color: var(--border-medium);
+    color: var(--text-primary);
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-md);
+}
+
+.nav-btn:active:not(:disabled) {
+    transform: translateY(0);
+}
+
+.nav-btn:disabled {
+    opacity: 0.3;
+    cursor: not-allowed;
+}
+
+.nav-btn.danger {
+    color: var(--danger);
+    background: var(--danger-soft);
+    border-color: rgba(232, 109, 109, 0.2);
+}
+
+.nav-btn.danger:hover:not(:disabled) {
+    background: rgba(232, 109, 109, 0.25);
+    border-color: rgba(232, 109, 109, 0.35);
+    box-shadow: 0 4px 16px rgba(232, 109, 109, 0.2);
+}
+
+/* ── Entry Section ── */
+.entry-section {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.section-header {
+    display: flex;
+    align-items: center;
+    gap: var(--space-4);
+}
+
+.section-header h2 {
+    font-family: var(--font-display);
+    font-size: 1.25rem;
+    font-weight: 700;
+    color: var(--text-primary);
+    white-space: nowrap;
+}
+
+.section-line {
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(90deg, var(--border-subtle), transparent);
+}
+
+/* ── Entry Form ── */
+.entry-form {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-5);
+}
+
+.form-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--space-5);
+}
+
+@media (max-width: 640px) {
+    .form-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-2);
+}
+
+.form-group label {
+    font-size: 0.8125rem;
+    font-weight: 600;
+    color: var(--text-secondary);
+    letter-spacing: 0.02em;
+}
+
+.form-group textarea {
+    width: 100%;
+    padding: var(--space-4);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    line-height: 1.6;
+    color: var(--text-primary);
+    background: var(--bg-surface);
+    border: 1px solid var(--border-subtle);
+    border-radius: var(--radius-md);
+    resize: vertical;
+    min-height: 100px;
+    transition: all 0.25s var(--ease-out-expo);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+}
+
+.form-group textarea::placeholder {
+    color: var(--text-muted);
+}
+
+.form-group textarea:focus {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft), 0 0 20px var(--accent-glow);
+    background: var(--bg-surface-elev);
+}
+
+.form-group textarea.error {
+    border-color: var(--danger);
+    box-shadow: 0 0 0 3px var(--danger-soft);
+}
+
+.char-count {
+    font-size: 0.6875rem;
+    color: var(--text-muted);
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+}
+
+.form-actions {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.submit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--space-2);
+    padding: var(--space-3) var(--space-6);
+    font-family: var(--font-body);
+    font-size: 0.9375rem;
+    font-weight: 600;
+    color: var(--bg-deep);
+    background: var(--accent);
+    border: none;
+    border-radius: var(--radius-md);
+    cursor: pointer;
+    transition: all 0.3s var(--ease-out-expo);
+    position: relative;
+    overflow: hidden;
+}
+
+.submit-btn::before {
+    content: "";
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, rgba(255,255,255,0.3), transparent);
+    opacity: 0;
+    transition: opacity 0.3s ease;
+}
+
+.submit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 24px rgba(232, 184, 109, 0.35), var(--shadow-glow);
+}
+
+.submit-btn:hover::before {
+    opacity: 1;
+}
+
+.submit-btn:active {
+    transform: translateY(0);
+}
+
+.submit-btn svg {
+    flex-shrink: 0;
+}
+
+/* ── Toast Notifications ── */
+.toast-container {
+    position: fixed;
+    bottom: var(--space-6);
+    right: var(--space-6);
+    z-index: 1000;
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-3);
+    pointer-events: none;
+}
+
+.toast {
+    display: flex;
+    align-items: center;
+    gap: var(--space-3);
+    padding: var(--space-4) var(--space-5);
+    font-size: 0.875rem;
+    font-weight: 500;
+    color: var(--text-primary);
+    background: var(--bg-surface-elev);
+    border: 1px solid var(--border-medium);
+    border-radius: var(--radius-md);
+    backdrop-filter: blur(20px);
+    -webkit-backdrop-filter: blur(20px);
+    box-shadow: var(--shadow-lg);
+    pointer-events: auto;
+    animation: toastSlideIn 0.4s var(--ease-spring) forwards,
+               toastFadeOut 0.4s var(--ease-out-expo) 3s forwards;
+    max-width: 360px;
+}
+
+.toast.success {
+    border-color: rgba(109, 232, 160, 0.3);
+    background: linear-gradient(135deg, rgba(109, 232, 160, 0.08), var(--bg-surface-elev));
+}
+
+.toast.error {
+    border-color: rgba(232, 109, 109, 0.3);
+    background: linear-gradient(135deg, rgba(232, 109, 109, 0.08), var(--bg-surface-elev));
+}
+
+.toast-icon {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.toast.success .toast-icon {
+    background: var(--success-soft);
+    color: var(--success);
+}
+
+.toast.error .toast-icon {
+    background: var(--danger-soft);
+    color: var(--danger);
+}
+
+@keyframes toastSlideIn {
+    from {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+    to {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+}
+
+@keyframes toastFadeOut {
+    from {
+        opacity: 1;
+        transform: translateX(0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translateX(40px) scale(0.95);
+    }
+}
+
+/* ── Empty State ── */
+.empty-state {
+    text-align: center;
+    padding: var(--space-10) var(--space-6);
+    color: var(--text-muted);
+}
+
+.empty-state h3 {
+    font-family: var(--font-display);
+    font-size: 1.5rem;
+    color: var(--text-secondary);
+    margin-bottom: var(--space-3);
+}
+
+.empty-state p {
+    font-size: 0.9375rem;
+    max-width: 400px;
+    margin: 0 auto;
+}
+
+/* ── Card transition animations ── */
+.flashcard {
+    animation: cardEnter 0.6s var(--ease-out-expo) forwards;
+}
+
+@keyframes cardEnter {
+    from {
+        opacity: 0;
+        transform: translateY(20px) scale(0.96);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+}
+
+/* ── Responsive ── */
+@media (max-width: 768px) {
+    .app-header {
+        padding: var(--space-4) var(--space-5);
+    }
+
+    .logo h1 {
+        font-size: 1.5rem;
+    }
+
+    .app-main {
+        padding: var(--space-5) var(--space-4) var(--space-10);
+        gap: var(--space-8);
+    }
+
+    .flashcard {
+        aspect-ratio: 4 / 3;
+    }
+
+    .flashcard-face {
+        padding: var(--space-5);
+    }
+
+    .face-text {
+        font-size: 1.125rem;
+    }
+
+    .card-nav {
+        gap: var(--space-3);
+    }
+
+    .nav-btn {
+        padding: var(--space-2) var(--space-4);
+    }
+
+    .toast-container {
+        left: var(--space-4);
+        right: var(--space-4);
+        bottom: var(--space-4);
+    }
+
+    .toast {
+        max-width: none;
+    }
+}
+
+/* ── Reduced Motion ── */
+@media (prefers-reduced-motion: reduce) {
+    .orb {
+        animation: none;
+    }
+
+    .flashcard-inner {
+        transition: none;
+    }
+
+    .flashcard.flipped .flashcard-inner {
+        transform: none;
+    }
+
+    .flashcard-back {
+        display: none;
+    }
+
+    .flashcard.flipped .flashcard-back {
+        display: flex;
+    }
+
+    .flashcard.flipped .flashcard-front {
+        display: none;
+    }
+
+    .toast {
+        animation: none;
+        opacity: 1;
+    }
+
+    .flashcard {
+        animation: none;
+        opacity: 1;
+    }
+}
